@@ -10,9 +10,12 @@ def expected(circuit,params):
     """
       Expectation
       INPUT:
+
         circuit: quantum circuit
         shots : Number of hits
+        
       OUTPUT:
+
         Returns measurement results
     
     """
@@ -27,7 +30,9 @@ def expected(circuit,params):
 def list_loss_value(circuit,thetass):
     """
       Calculating list value loss function values
+
       INPUT:
+
         thetass: Parameter array
         circuit: quantum circuit
     
@@ -43,7 +48,9 @@ def list_loss_value(circuit,thetass):
 def parameter_shift_gradient(circuit,params, index):
     """
       Calculating derivatives using parameter-shift-rule
+
       INPUT:
+
         circuit: quantum circuit
         params: Parameter array
         index: the index under consideration of the array
@@ -65,11 +72,15 @@ def parameter_shift_gradient(circuit,params, index):
 def parameter_optimization(circuit,thetas):
     """
       Parameter optimization using parameter-shift-rule
+
       INPUT:
-      circuit: quantum circuit
-      Thetas: Parametric array
+
+        circuit: quantum circuit
+        Thetas: Parametric array
+
       OUTPUT:
-      Returns array and parameter array list
+
+        Returns array and parameter array list
     """
     initial_params = thetas
     learning_rate = base.constant.learning_rate

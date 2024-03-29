@@ -12,9 +12,12 @@ from qiskit.quantum_info import Statevector
 def ansatz(t,thetas):
     """
         Input:
+
           t:time
           H1:hamiltonian operator
+
         Output:
+
           Return quantum circuit representing the operation e^-(i*t*H1)
     """
     u = expm(-1j*t*hm.h1(thetas))
@@ -26,6 +29,7 @@ def circuit_Rx():
     """
       Input:
       Output:
+      
         Returns the quantum circuit with all qubits given each qubit an additional Rx gate
     """
     qc = QuantumCircuit(ct.N)
@@ -39,7 +43,9 @@ def aqc(t,thetas):
 
           t:time
           H1:hamiltonian operator
+
         Output:
+
           Return quantum circuit = circuit_Rx + ansatz
     """
 

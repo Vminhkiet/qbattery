@@ -26,8 +26,10 @@ def h0():
 def h1(thetas):
     """
         Return H1 is formula in file quantum battery 2
+
         INPUT:
-        thetas: parameter with number 2*(N-1)
+
+          thetas: parameter with number 2*(N-1)
     """ 
     hamiltonian = np.zeros((2**ct.N, 2**ct.N), dtype=complex)
     for i in range(ct.N-1):
