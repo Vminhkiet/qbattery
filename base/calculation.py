@@ -12,7 +12,7 @@ def ps0():
 
     """
     ps_0 = ct.dw
-    for i in range(ct.N):
+    for i in range(ct.N - 1):
         ps_0 = np.kron(ps_0 , ct.dw)
     return ps_0
 
