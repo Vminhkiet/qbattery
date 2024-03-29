@@ -5,6 +5,7 @@ import qiskit
 from qiskit import Aer, QuantumCircuit, transpile, assemble
 import base.constant
 import base.hamiltonian
+
 def expected(circuit,params):
     """
       Expectation
@@ -15,13 +16,15 @@ def expected(circuit,params):
         Returns measurement results
     
     """
-    qc=circuit.copy()
+    qc = circuit.copy()
     qc.measure_all()
     sampler = Sampler()
     result = sampler.run(qc,parameter_values=params, shots = 10000).result().quasi_dists[0].get(0, 0)
     
     return result
-def loss_function(circuit,thetass):
+
+
+def list_loss_value(circuit,thetass):
     """
       Calculating list value loss function values
       INPUT:
@@ -32,9 +35,10 @@ def loss_function(circuit,thetass):
     listloss=[]
     for i in thetass:
      expectation_value = expected(circuit,i)
-     loss = 1-expectation_value
+     loss = 1 - expectation_value
      listloss.append(loss)
     return loss
+
 
 def parameter_shift_gradient(circuit,params, index):
     """
@@ -56,14 +60,16 @@ def parameter_shift_gradient(circuit,params, index):
     gradient = (expected(circuit,params_plus) - expected(circuit,params_minus)) / (2 * base.constant.delta)
     
     return gradient
+
+
 def parameter_optimization(circuit,thetas):
     """
       Parameter optimization using parameter-shift-rule
       INPUT:
-       circuit: quantum circuit
-       Thetas: Parametric array
+      circuit: quantum circuit
+      Thetas: Parametric array
       OUTPUT:
-       Returns array and parameter array list
+      Returns array and parameter array list
     """
     initial_params = thetas
     learning_rate = base.constant.learning_rate
@@ -74,3 +80,5 @@ def parameter_optimization(circuit,thetas):
         initial_params = initial_params - learning_rate * np.array(gradients)
         thetass.append(initial_params)
     return initial_params,thetass
+
+
