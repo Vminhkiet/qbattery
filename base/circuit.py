@@ -9,7 +9,7 @@ import base.constant as ct
 import base.hamiltonian as hm
 from qsee.compilation.qsp import QuantumStatePreparation
 from qiskit.quantum_info import Statevector
-def ansatz(t,thetas):
+def ansatz(num_qubits,t,thetas):
     """
         Input:
 
@@ -20,24 +20,26 @@ def ansatz(t,thetas):
 
           Return quantum circuit representing the operation e^-(i*t*H1)
     """
-    u = expm(-1j*t*hm.h1(thetas))
-    ansatz = QuantumStatePreparation.prepare(u).u
-    return ansatz
+    u = expm(-1j*t*hm.h1(num_qubits,thetas))
+    qst=QuantumStatePreparation.prepare(u)
+    ansatz = qst.u
+    ttas=qst.thetas
+    return ansatz,ttas
 
 
-def circuit_Rx():
+def circuit_Rx(num_qubits):
     """
       Input:
       Output:
       
         Returns the quantum circuit with all qubits given each qubit an additional Rx gate
     """
-    qc = QuantumCircuit(ct.N)
-    qc.rx(np.pi/2,range(ct.N))
+    qc = QuantumCircuit(num_qubits)
+    qc.rx(np.pi/2,range(num_qubits))
     return qc
 
 
-def aqc(t,thetas):
+def aqc(num_qubits,t,thetas):
     """
         Input:
 
@@ -49,8 +51,8 @@ def aqc(t,thetas):
           Return quantum circuit = circuit_Rx + ansatz
     """
 
-    qc1 = circuit_Rx()
-    ansatz1 = ansatz(t,thetas)
-    qc1.compose(ansatz1,range(ct.N),inplace=True)
+    qc1 = circuit_Rx(num_qubits)
+    ansatz1,ttas = ansatz(num_qubits,t,thetas)
+    qc1.compose(ansatz1,range(num_qubits),inplace=True)
 
-    return qc1
+    return qc1,ttas

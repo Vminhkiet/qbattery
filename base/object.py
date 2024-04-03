@@ -22,8 +22,8 @@ def psi_t(num_qubits, t, thetas):
           t: time
           thetas: array parameter (length 2*(N-1))
     """
-    psi_t = expm(-1j * t * base.hamiltonian.h1(num_qubits, thetas))
-    return psi_t @ psi_0(num_qubits)
+    psi_t = expm(-1j * t * base.hamiltonian.h1(num_qubits, thetas))@ psi_0(num_qubits)
+    return psi_t 
 
 def E(num_qubits, t, thetas):
     """
@@ -33,11 +33,7 @@ def E(num_qubits, t, thetas):
 
           thetas: array parameter (length 2*(N-1))
     """
-
-    if(t == 0):
-        return np.real(( tq.daggx(psi_0(num_qubits)) @ base.hamiltonian.h0(num_qubits) @ psi_0(num_qubits) )[0,0])
-    
-    return np.real(( tq.daggx(psi_t(num_qubits, t,thetas)) @ base.hamiltonian.h1(num_qubits, thetas) @ psi_t(num_qubits, t,thetas) )[0,0])
+    return np.real(( tq.daggx(psi_t(num_qubits,t,thetas)) @ base.hamiltonian.h0(num_qubits) @ psi_t(num_qubits,t,thetas) )[0,0])
 
 def W(num_qubits, t,thetas):
     """
