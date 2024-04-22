@@ -35,6 +35,33 @@ def E(num_qubits, t, thetas):
     """
     return np.real(( tq.daggx(psi_t(num_qubits,t,thetas)) @ base.hamiltonian.h0(num_qubits) @ psi_t(num_qubits,t,thetas) )[0,0])
 
+<<<<<<< HEAD
+=======
+def W(num_qubits, t,thetas):
+    """
+        Return W(t) = E(t) - E(0)
+
+        INPUT:
+
+          t: time
+          thetas: array parameter (length 2*(N-1))
+    """
+    return E(num_qubits, t,thetas) - E(num_qubits, 0,thetas)
+
+def P(num_qubits, t,thetas):
+    """
+        Return P(t) = W(t) / t
+
+        INPUT:
+
+          t: time
+          thetas: array parameter (length 2*(N-1))
+    """
+    if(t == 0):
+        return 0
+    
+    return W(num_qubits, t,thetas) / t
+>>>>>>> b3f939dd7cf083d5e26d18ffeceb42b55c60af3d
 
 
         

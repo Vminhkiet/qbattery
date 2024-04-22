@@ -2,7 +2,11 @@ import numpy as np
 
 learning_rate = 0.3
 delta = 0.001
+<<<<<<< HEAD
 max_iterations = 150
+=======
+max_iterations = 100
+>>>>>>> b3f939dd7cf083d5e26d18ffeceb42b55c60af3d
 
 h = 1
 
