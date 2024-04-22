@@ -1,9 +1,9 @@
 import numpy as np
 
-learning_rate = 0.1
+learning_rate = 0.3
 delta = 0.001
-max_iterations = 100
-N = 2
+max_iterations = 150
+
 h = 1
 
 Y = np.array([[0, -1j],[1j, 0]])
