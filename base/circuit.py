@@ -3,10 +3,8 @@ import tqix as tq
 from tqix import *
 import numpy as np, qiskit
 from qiskit.quantum_info import Operator
-import base.Gradient as gr
 from scipy.linalg import expm
-import base.constant as ct
-import base.hamiltonian as hm
+from . import hamiltonian
 from qsee.compilation.qsp import QuantumStatePreparation
 from qiskit.quantum_info import Statevector
 def ansatz(num_qubits,t,thetas):
