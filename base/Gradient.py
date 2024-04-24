@@ -2,7 +2,6 @@ import numpy as np
 from . import constant
 from . import hamiltonian
 from . import object
-import tqix as tq
 
 
 def Pmax(num_qubits, t1, thetas, shots):

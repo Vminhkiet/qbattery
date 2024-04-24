@@ -1,12 +1,7 @@
-import matplotlib.pyplot as plt
-import tqix as tq
-from tqix import *
 import numpy as np
-import qiskit
 from qiskit.quantum_info import Operator
 from scipy.linalg import expm
 from . import constant
-
 
 # def Pi(num_qubits, index):
 #     sum = constant.YY
@@ -20,31 +15,26 @@ from . import constant
 #         sum = np.kron(sum, constant.I)
 #     return sum
 
-from tqix import *
-from tqix.pis import *
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.linalg import expm
 
-def h0(num_qubits, h):
-    qc = circuit(num_qubits)
-    Jz = qc.Jz()
-    return (h * Jz).todense()
+# def h0(num_qubits, h):
+#     qc = circuit(num_qubits)
+#     Jz = qc.Jz()
+#     return (h * Jz).todense()
 
-# def h0(num_qubits):
-#     """
-#         Return H0 is formula in photo of teacher BINHO
+def h0(num_qubits):
+    """
+        Return H0 is formula in photo of teacher BINHO
 
-#     """
-#     sum_h0 = np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
-#     for i in range(num_qubits):
-#         H0 = constant.Y
-#         for j in range(i):
-#             H0 = np.kron(constant.I, H0)
-#         for j in range(i+1, num_qubits):
-#             H0 = np.kron(H0, constant.I)
-#         sum_h0 += H0
-#     return sum_h0 * constant.h
+    """
+    sum_h0 = np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
+    for i in range(num_qubits):
+        H0 = constant.Y
+        for j in range(i):
+            H0 = np.kron(constant.I, H0)
+        for j in range(i+1, num_qubits):
+            H0 = np.kron(H0, constant.I)
+        sum_h0 += H0
+    return sum_h0 * constant.h
 
 
 def Pi(num_qubits, term, index):
@@ -108,7 +98,7 @@ def h1_xy(num_qubits, thetas, gamma):
         raise ValueError('The number of parameters is not correct')
     return h_general(num_qubits, thetas, gamma, h = 0)
 
-def h1_xxz(num_qubits, thetas, gamma):
+def h1_xxz(num_qubits, thetas):
     if len(thetas) != 2*(num_qubits-1):
         raise ValueError('The number of parameters is not correct')
     return h_general(num_qubits, thetas, gamma=0 , h = 0)

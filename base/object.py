@@ -2,8 +2,6 @@ import numpy as np
 import base.hamiltonian
 import base.constant
 from scipy.linalg import expm
-import tqix as tq
-
 
 def psi_0(num_qubits):
     """
@@ -36,7 +34,8 @@ def E(num_qubits, t, h1):
 
           thetas: array parameter (length 2*(N-1))
     """
-    return (tq.daggx(psi_t(num_qubits, t, h1)) @ base.hamiltonian.h0(num_qubits) @ psi_t(num_qubits, t, h1))[0, 0]
+    # 
+    return np.real(np.transpose(np.conjugate(psi_t(num_qubits, t, h1))) @ base.hamiltonian.h0(num_qubits) @ psi_t(num_qubits, t, h1))[0, 0]
 
 
 def W(num_qubits, t, h1):
