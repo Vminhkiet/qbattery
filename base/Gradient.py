@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.signal import find_peaks
 from . import constant
 from . import hamiltonian
 from . import object
@@ -29,30 +30,29 @@ def Pmax(num_qubits, t1, thetas, shots):
     return max_value
 
 
-# def gradient(num_qubits, t1, thetas, index):
-#     pi = hamiltonian.pi(index, num_qubits)
-#     pst = object.psi_t(num_qubits, t1, thetas)
-#     h0 = hamiltonian.h0(num_qubits)
-#     return np.real(((1j*t1*tq.daggx(pst)@(pi@h0-h0@pi)@pst))[0, 0])
+def grad_Pmax(num_qubits, tmax, thetas, h1, gamma = 0):
+    psi_t = object.psi_t(num_qubits, tmax, h1)
+    h0 = hamiltonian.h0(num_qubits)
+    grad = np.zeros(len(thetas), dtype=np.complex128)
+    for i in range(num_qubits - 1):
+        Pi = (1 + gamma) * hamiltonian.Pi(num_qubits, 'XX', i) + (1 - gamma) * hamiltonian.Pi(num_qubits, 'YY', i)
+        grad[i] = 1j * tmax * (np.transpose(np.conjugate(psi_t)) @ (np.transpose(np.conjugate(Pi)) @ h0 - h0 @ Pi) @ psi_t)[0,0]
+    if len(thetas) > num_qubits - 1:
+        for i in range(num_qubits - 1):
+            Pi = hamiltonian.Pi(num_qubits, 'ZZ', i)  
+            grad[i + num_qubits - 1] = 1j * tmax * (np.transpose(np.conjugate(psi_t)) @ (np.transpose(np.conjugate(Pi)) @ h0 - h0 @ Pi) @ psi_t)[0,0]
+    return grad
 
 
-# def gradient_descent(num_qubits, t1, thetas, iteration):
-
-#     initial_params = thetas
-#     learning_rate = constant.learning_rate
-#     max_iterations = iteration
-#     thetass = []
-#     arrayP = []
-#     thetass.append(initial_params)
-#     maxP = Pmax(num_qubits, t1, initial_params, 100)
-#     arrayP.append(maxP)
-#     for _ in range(iteration):
-#         gradients = [gradient(num_qubits, t1, initial_params, i)
-#                      for i in range(len(initial_params))]
-#         initial_params = initial_params - learning_rate * np.array(gradients)
-#         arrayP.append(Pmax(num_qubits, t1, initial_params, 1024))
-#         thetass.append(initial_params)
-#     max_value = np.max(arrayP)
-#     return max_value
-
-
+def find_Pmax(num_qubits, h1, t = 2, delta_t = 0.01, auto_stop = True):
+    Ps = []
+    ts = np.arange(0, t, delta_t)
+    for t in ts:
+        P = object.P(num_qubits, t, h1)
+        Ps.append(P)
+        peaks, _ = find_peaks(Ps)
+        if len(peaks) == 1 and auto_stop:
+            break
+    Pmax = np.max(Ps)
+    tmax = ts[np.argmax(Ps)]
+    return Ps, Pmax, tmax
