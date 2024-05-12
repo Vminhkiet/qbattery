@@ -18,7 +18,7 @@ def ansatz(num_qubits,t,thetas):
 
           Return quantum circuit representing the operation e^-(i*t*H1)
     """
-    u = expm(-1j*t*hm.h1(num_qubits,thetas))
+    u = expm(-1j*t*hamiltonian.h1(num_qubits,thetas))
     qst=QuantumStatePreparation.prepare(u)
     ansatz = qst.u
     ttas=qst.thetas
