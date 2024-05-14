@@ -56,3 +56,4 @@ def find_Pmax(num_qubits, h1, t = 2, delta_t = 0.01, auto_stop = True):
     Pmax = np.max(Ps)
     tmax = ts[np.argmax(Ps)]
     return Ps, Pmax, tmax
+

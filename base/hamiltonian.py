@@ -70,11 +70,12 @@ def Pi(num_qubits, term, index):
     return P
 def Pij(n_rows,n_columns, term, i,j):
     num_qubits=n_columns*n_rows
-
+    #điều kiện nếu ô không hợp lệ trả về 0 
+    #i,j bây giờ đang ở dạng ma trận (row+2)x(column+2) đếm theo thứ tự từ trái sang phải từ trên xuống dưới
     if(i<n_columns+2 or j<n_columns+2 or i%(n_columns+2)==0 or j%(n_columns+2)==0 or (i+1) % (n_columns+2) == 0 or (j+1) % (n_columns+2)==0 or i>=(n_columns+2)*(n_rows+1) or j>=(n_columns+2)*(n_rows+1)):
         return 0
     
-    
+    #chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj 
     i=(i//(n_columns+2)-1)*n_columns+i%(n_columns+2)-1
     j=(j//(n_columns+2)-1)*n_columns+j%(n_columns+2)-1
     print(i,j)
@@ -85,6 +86,7 @@ def Pij(n_rows,n_columns, term, i,j):
         x=j
         y=i
 
+    #vd công thức I@Z1@I@I@Z4@I thì tạo P=I@I => P=Z1@P@Z4 => I@P@I 
     P= constant.I
     if(x+1==y):
         P = 1
@@ -107,10 +109,12 @@ def h1_2D(n_rows,n_columns,thetasJ,thetasG,h):
     num_qubits=n_columns*n_rows
     H0=h0(num_qubits,h)
     H1=np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
-
+    
+    #ô hợp lệ là ô nằm trong ma trận row x column khi thêm trái phải trên dưới 1 hàng cột cho ma trận row x column thì những ô được thêm là ô không hợp lệ
+    #đang xét những ô hợp lệ theo ma trận (row+2)x(col+2)
     for i in range(1,n_rows+1):
         for j in range(1,n_columns+1):
-
+            # cộng 8 ô xung quanh, nếu không hợp lệ trả về 0 xem như không cộng Pij
             H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,i*(n_columns+2)+j+1) * thetasJ[(i-1)*n_columns+j-1]
             H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,i*(n_columns+2)+j-1) * thetasJ[(i-1)*n_columns+j-1]
             H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,(i+1)*(n_columns+2)+j) * thetasJ[(i-1)*n_columns+j-1]
