@@ -103,26 +103,43 @@ def Pij(n_rows,n_columns, term, i,j):
     for _ in range(y+1,num_qubits):
         P = np.kron(P, constant.I)
     return P
+def Pi_thetasj_2d(n_row,n_col,term,i):
+    num_qubits = n_row * n_col
+    Pi = np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
+    #chuyển về dạng hàng x, cột y của ma trận row x col
+    x = i // n_col + 1
+    y = i % n_col  + 1
+    #tiếp đến xét ma trận (row+2)x(col+2) nếu là ô không thõa mãn thì trả về 0
+    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,x*(n_col + 2)+y+1) 
+    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,x*(n_col + 2)+y-1) 
+    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x+1)*(n_col + 2)+y)
+    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x-1)*(n_col + 2)+y)
+    return Pi
 
+def Pi_thetasg_2d(n_row,n_col,term,i):
+    num_qubits = n_row * n_col
+    Pi = np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
+    #chuyển về dạng hàng x, cột y của ma trận row x col
+    x = i // n_col + 1
+    y = i % n_col  + 1
+    #tiếp đến xét ma trận (row+2)x(col+2) nếu là ô không thõa mãn thì trả về 0
+    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x-1)*(n_col+2)+y-1) 
+    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x+1)*(n_col+2)+y+1) 
+    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x+1)*(n_col+2)+y-1)
+    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x-1)*(n_col+2)+y+1)
+    return Pi
 
-def h1_2D(n_rows,n_columns,thetasJ,thetasG,h):
+def h1_2D(n_rows,n_columns,thetas,h=0):
     num_qubits=n_columns*n_rows
     H0=h0(num_qubits,h)
     H1=np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
     
     #ô hợp lệ là ô nằm trong ma trận row x column khi thêm trái phải trên dưới 1 hàng cột cho ma trận row x column thì những ô được thêm là ô không hợp lệ
-    #đang xét những ô hợp lệ theo ma trận (row+2)x(col+2)
-    for i in range(1,n_rows+1):
-        for j in range(1,n_columns+1):
-            # cộng 8 ô xung quanh, nếu không hợp lệ trả về 0 xem như không cộng Pij
-            H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,i*(n_columns+2)+j+1) * thetasJ[(i-1)*n_columns+j-1]
-            H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,i*(n_columns+2)+j-1) * thetasJ[(i-1)*n_columns+j-1]
-            H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,(i+1)*(n_columns+2)+j) * thetasJ[(i-1)*n_columns+j-1]
-            H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,(i-1)*(n_columns+2)+j) * thetasJ[(i-1)*n_columns+j-1]
-            H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,(i-1)*(n_columns+2)+j-1) * thetasG[(i-1)*n_columns+j-1]
-            H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,(i+1)*(n_columns+2)+j+1) * thetasG[(i-1)*n_columns+j-1]
-            H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,(i+1)*(n_columns+2)+j-1) * thetasG[(i-1)*n_columns+j-1]
-            H1 = H1 + Pij(n_rows,n_columns,'Z',i*(n_columns+2)+j,(i-1)*(n_columns+2)+j+1) * thetasG[(i-1)*n_columns+j-1]
+    #đang xét những ô hợp lệ theo ma trận row x col
+    for i in range(num_qubits):
+
+            H1 = H1 + Pi_thetasj_2d(n_rows,n_columns,'Z',i)*thetas[i]
+            H1 = H1 + Pi_thetasg_2d(n_rows,n_columns,'Z',i)*thetas[i+num_qubits]
 
             
     return H0+H1
