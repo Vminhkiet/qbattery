@@ -22,7 +22,7 @@ def Pmax(num_qubits, t1, h1, shots):
     h0=hamiltonian.h0(num_qubits,h=1)
     ps0=object.psi_0(num_qubits)
     E0=np.real( (tq.daggx(ps0)) @h0@ ps0)[0, 0]
-    print(E0)
+
     for t in time:
         w = 0
         p = 0
@@ -30,7 +30,6 @@ def Pmax(num_qubits, t1, h1, shots):
             w = object.E(t,h1,h0,ps0) - E0
             p = w/t
         
-        print(w)
         arrayW.append(w)
         arrayP.append(p)
     max_value = np.max(arrayP)
@@ -74,9 +73,9 @@ def grad_2D_Pmax(n_row,n_col, tmax, thetas, h1):
     for i in range(2*num_qubits):
         
         if(i>=num_qubits):
-            Pi=hamiltonian.Pi_thetasg_2d(n_row,n_col,'Z',i)
+            Pi=-1*hamiltonian.Pi_thetasg_2d(n_row,n_col,'Z',i)
         else:
-            Pi=hamiltonian.Pi_thetasj_2d(n_row,n_col,'Z',i)
+            Pi=-1*hamiltonian.Pi_thetasj_2d(n_row,n_col,'Z',i)
 
         grad[i] = 1j * tmax * (np.transpose(np.conjugate(psi_t)) @ (np.transpose(np.conjugate(Pi)) @ h0 - h0 @ Pi) @ psi_t)[0,0]
    

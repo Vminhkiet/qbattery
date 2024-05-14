@@ -78,7 +78,7 @@ def Pij(n_rows,n_columns, term, i,j):
     #chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj 
     i=(i//(n_columns+2)-1)*n_columns+i%(n_columns+2)-1
     j=(j//(n_columns+2)-1)*n_columns+j%(n_columns+2)-1
-    print(i,j)
+
     x=i
     y=j
 
