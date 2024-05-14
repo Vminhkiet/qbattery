@@ -21,7 +21,7 @@ from . import constant
 #     Jz = qc.Jz()
 #     return (h * Jz).todense()
 
-def h0(num_qubits,h):
+def h0(num_qubits, h):
     """
         Return H0 is formula in photo of teacher BINHO
 
@@ -49,7 +49,7 @@ def Pi(num_qubits, term, index):
         _type_: _description_
     """
     # Single term
-    
+
     # Double term
     if term == 'XX':
         P = constant.XX
@@ -68,81 +68,95 @@ def Pi(num_qubits, term, index):
     for _ in range(index):
         P = np.kron(P, constant.I)
     return P
-def Pij(n_rows,n_columns, term, i,j):
-    num_qubits=n_columns*n_rows
-    #điều kiện nếu ô không hợp lệ trả về 0 
-    #i,j bây giờ đang ở dạng ma trận (row+2)x(column+2) đếm theo thứ tự từ trái sang phải từ trên xuống dưới
-    if(i<n_columns+2 or j<n_columns+2 or i%(n_columns+2)==0 or j%(n_columns+2)==0 or (i+1) % (n_columns+2) == 0 or (j+1) % (n_columns+2)==0 or i>=(n_columns+2)*(n_rows+1) or j>=(n_columns+2)*(n_rows+1)):
+
+
+def Pij(n_rows, n_columns, term, i, j):
+    num_qubits = n_columns*n_rows
+    # điều kiện nếu ô không hợp lệ trả về 0
+    # i,j bây giờ đang ở dạng ma trận (row+2)x(column+2) đếm theo thứ tự từ trái sang phải từ trên xuống dưới
+    if (i < n_columns+2 or j < n_columns+2 or i % (n_columns+2) == 0 or j % (n_columns+2) == 0 or (i+1) % (n_columns+2) == 0 or (j+1) % (n_columns+2) == 0 or i >= (n_columns+2)*(n_rows+1) or j >= (n_columns+2)*(n_rows+1)):
         return 0
-    
-    #chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj 
-    i=(i//(n_columns+2)-1)*n_columns+i%(n_columns+2)-1
-    j=(j//(n_columns+2)-1)*n_columns+j%(n_columns+2)-1
 
-    x=i
-    y=j
+    # chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj
+    i = (i//(n_columns+2)-1)*n_columns+i % (n_columns+2)-1
+    j = (j//(n_columns+2)-1)*n_columns+j % (n_columns+2)-1
 
-    if(j<i):
-        x=j
-        y=i
+    x = i
+    y = j
 
-    #vd công thức I@Z1@I@I@Z4@I thì tạo P=I@I => P=Z1@P@Z4 => I@P@I 
-    P= constant.I
-    if(x+1==y):
+    if (j < i):
+        x = j
+        y = i
+
+    # vd công thức I@Z1@I@I@Z4@I thì tạo P=I@I => P=Z1@P@Z4 => I@P@I
+    P = constant.I
+    PS = 'I'
+    if (x+1 == y):
         P = 1
-    for _ in range(x+1,y-1):
-        P = np.kron(P,constant.I)
+        PS = '1'
+    for _ in range(x+1, y-1):
+        P = np.kron(P, constant.I)
+        PS += 'I'
     if term == 'Z':
-        P = np.kron(constant.Z,np.kron(P,constant.Z))
+        P = np.kron(constant.Z, np.kron(P, constant.Z))
+        PS += 'Z' + PS + 'Z'
     elif term == 'X':
-        P = np.kron(constant.X,np.kron(P,constant.X))
+        P = np.kron(constant.X, np.kron(P, constant.X))
     elif term == 'Y':
-        P = np.kron(constant.Y,np.kron(P,constant.Y))
+        P = np.kron(constant.Y, np.kron(P, constant.Y))
     for _ in range(x):
         P = np.kron(constant.I, P)
-    for _ in range(y+1,num_qubits):
+        PS = 'I' + PS
+    for _ in range(y+1, num_qubits):
         P = np.kron(P, constant.I)
+        PS = PS + 'I'
+    print('Symbol: ', PS)
+    print('Dim Pij: ', len(P))
     return P
-def Pi_thetasj_2d(n_row,n_col,term,i):
+
+
+def Pi_thetasj_2d(n_row, n_col, term, i):
     num_qubits = n_row * n_col
     Pi = np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
-    #chuyển về dạng hàng x, cột y của ma trận row x col
+    # chuyển về dạng hàng x, cột y của ma trận row x col
     x = i // n_col + 1
-    y = i % n_col  + 1
-    #tiếp đến xét ma trận (row+2)x(col+2) nếu là ô không thõa mãn thì trả về 0
-    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,x*(n_col + 2)+y+1) 
-    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,x*(n_col + 2)+y-1) 
-    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x+1)*(n_col + 2)+y)
-    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x-1)*(n_col + 2)+y)
+    y = i % n_col + 1
+    # tiếp đến xét ma trận (row+2)x(col+2) nếu là ô không thõa mãn thì trả về 0
+    Pi = Pi + Pij(n_row, n_col, term, x*(n_col+2)+y, x*(n_col + 2)+y+1)
+    Pi = Pi + Pij(n_row, n_col, term, x*(n_col+2)+y, x*(n_col + 2)+y-1)
+    Pi = Pi + Pij(n_row, n_col, term, x*(n_col+2)+y, (x+1)*(n_col + 2)+y)
+    Pi = Pi + Pij(n_row, n_col, term, x*(n_col+2)+y, (x-1)*(n_col + 2)+y)
     return Pi
 
-def Pi_thetasg_2d(n_row,n_col,term,i):
+
+def Pi_thetasg_2d(n_row, n_col, term, i):
     num_qubits = n_row * n_col
     Pi = np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
-    #chuyển về dạng hàng x, cột y của ma trận row x col
+    # chuyển về dạng hàng x, cột y của ma trận row x col
     x = i // n_col + 1
-    y = i % n_col  + 1
-    #tiếp đến xét ma trận (row+2)x(col+2) nếu là ô không thõa mãn thì trả về 0
-    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x-1)*(n_col+2)+y-1) 
-    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x+1)*(n_col+2)+y+1) 
-    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x+1)*(n_col+2)+y-1)
-    Pi = Pi + Pij(n_row,n_col,term,x*(n_col+2)+y,(x-1)*(n_col+2)+y+1)
+    y = i % n_col + 1
+    # tiếp đến xét ma trận (row+2)x(col+2) nếu là ô không thõa mãn thì trả về 0
+    Pi = Pi + Pij(n_row, n_col, term, x*(n_col+2)+y, (x-1)*(n_col+2)+y-1)
+    Pi = Pi + Pij(n_row, n_col, term, x*(n_col+2)+y, (x+1)*(n_col+2)+y+1)
+    Pi = Pi + Pij(n_row, n_col, term, x*(n_col+2)+y, (x+1)*(n_col+2)+y-1)
+    Pi = Pi + Pij(n_row, n_col, term, x*(n_col+2)+y, (x-1)*(n_col+2)+y+1)
     return Pi
 
-def h1_2D(n_rows,n_columns,thetas,h=0):
-    num_qubits=n_columns*n_rows
-    H0=h0(num_qubits,h)
-    H1=np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
-    
-    #ô hợp lệ là ô nằm trong ma trận row x column khi thêm trái phải trên dưới 1 hàng cột cho ma trận row x column thì những ô được thêm là ô không hợp lệ
-    #đang xét những ô hợp lệ theo ma trận row x col
+
+def h1_2D(n_rows, n_columns, thetas, h=0):
+    num_qubits = n_columns*n_rows
+    H0 = h0(num_qubits, h)
+    H1 = np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
+
+    # ô hợp lệ là ô nằm trong ma trận row x column khi thêm trái phải trên dưới 1 hàng cột cho ma trận row x column thì những ô được thêm là ô không hợp lệ
+    # đang xét những ô hợp lệ theo ma trận row x col
     for i in range(num_qubits):
 
-            H1 = H1 + Pi_thetasj_2d(n_rows,n_columns,'Z',i)*thetas[i]
-            H1 = H1 + Pi_thetasg_2d(n_rows,n_columns,'Z',i)*thetas[i+num_qubits]
+        H1 = H1 + Pi_thetasj_2d(n_rows, n_columns, 'Z', i)*thetas[i]
+        H1 = H1 + Pi_thetasg_2d(n_rows, n_columns, 'Z', i)*thetas[i+num_qubits]
 
-            
     return H0+H1
+
 
 def h_general(num_qubits, thetas, gamma, h):
     """
@@ -160,7 +174,9 @@ def h_general(num_qubits, thetas, gamma, h):
         ZZ = Pi(num_qubits, 'ZZ', i)
         Z = Pi(num_qubits, 'Z', i)
         if thetas.shape[0] == 2*(num_qubits-1):
-            hamiltonian += -thetas[i]*((1 + gamma)*XX + (1 - gamma)*YY) - thetas[i+num_qubits-1] * ZZ - h * Z
+            hamiltonian += - \
+                thetas[i]*((1 + gamma)*XX + (1 - gamma)*YY) - \
+                thetas[i+num_qubits-1] * ZZ - h * Z
         elif thetas.shape[0] == num_qubits-1:
             hamiltonian += -thetas[i]*((1 + gamma)*XX + (1 - gamma)*YY) - h * Z
     return hamiltonian
@@ -169,20 +185,19 @@ def h_general(num_qubits, thetas, gamma, h):
 def h1_xx(num_qubits, thetas):
     if len(thetas) != num_qubits-1:
         raise ValueError('The number of parameters is not correct')
-    return h_general(num_qubits, thetas, gamma = 0, h = 0)
+    return h_general(num_qubits, thetas, gamma=0, h=0)
+
 
 def h1_xy(num_qubits, thetas, gamma):
     if len(thetas) != 2*(num_qubits-1):
         raise ValueError('The number of parameters is not correct')
-    return h_general(num_qubits, thetas, gamma, h = 0)
+    return h_general(num_qubits, thetas, gamma, h=0)
+
 
 def h1_xxz(num_qubits, thetas):
     if len(thetas) != 2*(num_qubits-1):
         raise ValueError('The number of parameters is not correct')
-    return h_general(num_qubits, thetas, gamma=0 , h = 0)
-
-            
-
+    return h_general(num_qubits, thetas, gamma=0, h=0)
 
 
 def h1(num_qubits, thetas):
