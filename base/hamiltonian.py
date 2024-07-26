@@ -3,6 +3,16 @@ from qiskit.quantum_info import Operator
 from scipy.linalg import expm
 from . import constant
 
+def covert_3D_to_2D(x,y,z):
+    """
+       4x4x4
+    """
+    return x*2 + y*2 - 4 + 1 , z
+def covert_3D_to_2D(point_graph,z):
+    """
+    
+    """
+    return point_graph , z
 def Pi_1D(num_qubits, index):
     sum = constant.YY
     if (index % 2 == 0):
@@ -45,7 +55,6 @@ def h0_2D(num_qubits, h = 1):
             H0 = np.kron(H0, constant.I)
         sum_h0 += H0
     return sum_h0*-h
-
 def Pi(num_qubits, term, index):
     """_summary_
 
@@ -83,13 +92,29 @@ def Pij_2D(n_rows, n_columns, term, i, j):
     num_qubits = n_columns*n_rows
     # điều kiện nếu ô không hợp lệ trả về 0
     # i,j bây giờ đang ở dạng ma trận (row+2)x(column+2) đếm theo thứ tự từ trái sang phải từ trên xuống dưới
-    if (i < n_columns+2 or j < n_columns+2 or i % (n_columns+2) == 0 or j % (n_columns+2) == 0 or (i+1) % (n_columns+2) == 0 or (j+1) % (n_columns+2) == 0 or i >= (n_columns+2)*(n_rows+1) or j >= (n_columns+2)*(n_rows+1)):
-        return 0
-
-    # chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj
-    i = (i//(n_columns+2)-1)*n_columns+i % (n_columns+2)-1
-    j = (j//(n_columns+2)-1)*n_columns+j % (n_columns+2)-1
-
+    if(constant.tubular == 0):
+        if (i < n_columns+2 or j < n_columns+2 or i % (n_columns+2) == 0 or j % (n_columns+2) == 0 or (i+1) % (n_columns+2) == 0 or (j+1) % (n_columns+2) == 0 or i >= (n_columns+2)*(n_rows+1) or j >= (n_columns+2)*(n_rows+1)):
+            return 0
+        # chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj
+        i = (i//(n_columns+2)-1)*n_columns+i % (n_columns+2)-1
+        j = (j//(n_columns+2)-1)*n_columns+j % (n_columns+2)-1
+    else:
+        if (i < n_columns+2 or j < n_columns+2 or i % (n_columns+2) == 0 or (i+1) % (n_columns+2) == 0 or i >= (n_columns+2)*(n_rows+1) or j >= (n_columns+2)*(n_rows+1)):
+            return 0
+        # chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj
+        
+        i = (i//(n_columns+2)-1)*n_columns+i % (n_columns+2)-1
+        k = 0
+        
+        if(j % (n_columns+2) == 0):
+            k = n_columns
+        elif((j+1) % (n_columns+2) == 0 ):
+            k = -n_columns
+        
+        j = (j//(n_columns+2)-1)*n_columns+j % (n_columns+2)-1 + k
+        print(i,j)
+        
+    
     x = i
     y = j
 

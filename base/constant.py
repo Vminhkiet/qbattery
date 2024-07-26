@@ -16,3 +16,4 @@ YY = np.kron(Y,Y)
 ZZ = np.kron(Z,Z)
 dw = np.array([[1/np.sqrt(2)],[-1j/np.sqrt(2)]])
 state=np.array([[1/np.sqrt(2)],[1/np.sqrt(2)]])
+tubular = 1
