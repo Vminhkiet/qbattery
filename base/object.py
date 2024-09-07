@@ -14,9 +14,11 @@ def E_2D(h1, t):
     """
     # 
     num_qubits = int(np.log2(h1.shape[0]))
-    k = psi_t_2D(h1, t)
-    m = hamiltonian.h0_2D(num_qubits) 
-    return np.real(np.transpose(np.conjugate(psi_t_2D(h1, t))) @ hamiltonian.h0_2D(num_qubits) @ psi_t_2D(h1, t))[0, 0]
+    
+    if(constant.tubular == 0):
+        return np.real(np.transpose(np.conjugate(psi_t_2D(h1, t))) @ hamiltonian.h0_2D(num_qubits) @ psi_t_2D(h1, t))[0, 0]
+    else:
+        return np.real(np.transpose(np.conjugate(psi_t_2D(h1, t))) @ hamiltonian.h0_2D_tubular(num_qubits) @ psi_t_2D(h1, t))[0, 0]
 
 
 def W_1D(h1, t):

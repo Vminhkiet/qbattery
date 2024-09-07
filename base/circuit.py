@@ -5,9 +5,9 @@ import numpy as np, qiskit
 from qiskit.quantum_info import Operator
 from scipy.linalg import expm
 from . import hamiltonian
-from qsee.compilation.qsp import QuantumStatePreparation
+from qoop.compilation.qsp import QuantumStatePreparation
 from qiskit.quantum_info import Statevector
-def ansatz(num_qubits,t,thetas):
+def ansatz(t,h1):
     """
         Input:
 
@@ -18,7 +18,7 @@ def ansatz(num_qubits,t,thetas):
 
           Return quantum circuit representing the operation e^-(i*t*H1)
     """
-    u = expm(-1j*t*hamiltonian.h1(num_qubits,thetas))
+    u = expm(-1j*t*h1)
     qst=QuantumStatePreparation.prepare(u)
     ansatz = qst.u
     ttas=qst.thetas
@@ -37,7 +37,7 @@ def circuit_Rx(num_qubits):
     return qc
 
 
-def aqc(num_qubits,t,thetas):
+def aqc(num_qubits,t,h1):
     """
         Input:
 
@@ -50,7 +50,7 @@ def aqc(num_qubits,t,thetas):
     """
 
     qc1 = circuit_Rx(num_qubits)
-    ansatz1,ttas = ansatz(num_qubits,t,thetas)
+    ansatz1,ts = ansatz(t,h1)
     qc1.compose(ansatz1,range(num_qubits),inplace=True)
-
-    return qc1,ttas
+    print("aasd")
+    return qc1,ts

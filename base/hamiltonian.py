@@ -40,7 +40,6 @@ def h0_1D(num_qubits):
         sum_h0 += H0
     return sum_h0 * constant.h
 
-
 def h0_2D(num_qubits, h = 1):
     """
         Return H0 is formula in photo of teacher BINHO
@@ -55,6 +54,22 @@ def h0_2D(num_qubits, h = 1):
             H0 = np.kron(H0, constant.I)
         sum_h0 += H0
     return sum_h0*-h
+
+def h0_2D_tubular(num_qubits, h = 1):
+    """
+        Return H0 is formula in photo of teacher BINHO
+
+    """
+    sum_h0 = np.zeros((2**num_qubits, 2**num_qubits), dtype=complex)
+    for i in range(num_qubits):
+        H0 = constant.Z
+        for j in range(i):
+            H0 = np.kron(constant.I, H0)
+        for j in range(i+1, num_qubits):
+            H0 = np.kron(H0, constant.I)
+        sum_h0 += H0
+    return sum_h0*-h
+
 def Pi(num_qubits, term, index):
     """_summary_
 
@@ -99,21 +114,31 @@ def Pij_2D(n_rows, n_columns, term, i, j):
         i = (i//(n_columns+2)-1)*n_columns+i % (n_columns+2)-1
         j = (j//(n_columns+2)-1)*n_columns+j % (n_columns+2)-1
     else:
-        if (i < n_columns+2 or j < n_columns+2 or i % (n_columns+2) == 0 or (i+1) % (n_columns+2) == 0 or i >= (n_columns+2)*(n_rows+1) or j >= (n_columns+2)*(n_rows+1)):
-            return 0
-        # chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj
-        
-        i = (i//(n_columns+2)-1)*n_columns+i % (n_columns+2)-1
-        k = 0
-        
-        if(j % (n_columns+2) == 0):
-            k = n_columns
-        elif((j+1) % (n_columns+2) == 0 ):
-            k = -n_columns
-        
-        j = (j//(n_columns+2)-1)*n_columns+j % (n_columns+2)-1 + k
-        print(i,j)
-        
+        if(constant.row == 1):
+            # khong xoay
+            if (i < n_columns+2 or j < n_columns+2 or i % (n_columns+2) == 0 or (i+1) % (n_columns+2) == 0 or i >= (n_columns+2)*(n_rows+1) or j >= (n_columns+2)*(n_rows+1)):
+                return 0
+            # chuyển về i,j đếm ở dạng ma trận row x column đếm theo cách tương tự để tính ZiZj
+            
+            i = (i//(n_columns+2)-1)*n_columns+i % (n_columns+2)-1
+            k = 0
+            
+            if(j % (n_columns+2) == 0):
+                k = n_columns
+            elif((j+1) % (n_columns+2) == 0 ):
+                k = -n_columns
+            
+            j = (j//(n_columns+2)-1)*n_columns+j % (n_columns+2)-1 + k
+        else:
+            if (i < n_columns+2 or j % (n_columns+2) == 0 or i % (n_columns+2) == 0 or (i+1) % (n_columns+2) == 0 or (j+1) % (n_columns+2) == 0 or i >= (n_columns+2)*(n_rows+1) ):
+                return 0
+            i = (i//(n_columns+2)-1)*n_columns+i % (n_columns+2)-1
+            
+            if(j < (n_columns+2) == 0):
+                j = j+n_rows*(n_columns+2)
+            elif(j >= (n_columns+2)*(n_rows+1) ):
+                j = j-n_rows*(n_columns+2)
+            j = (j//(n_columns+2)-1)*n_columns+j % (n_columns+2)-1
     
     x = i
     y = j
@@ -187,8 +212,8 @@ def h1_2D(n_rows, n_columns, thetas, h = 0):
     # ô hợp lệ là ô nằm trong ma trận row x column khi thêm trái phải trên dưới 1 hàng cột cho ma trận row x column thì những ô được thêm là ô không hợp lệ
     # đang xét những ô hợp lệ theo ma trận row x col
     for i in range(num_qubits):
-        H1 = H1 + Pi_thetasJ_2D(n_rows, n_columns, 'Z', i)*thetas[i]
-        H1 = H1 + Pi_thetasG_2D(n_rows, n_columns, 'Z', i)*thetas[i+num_qubits]
+        H1 = H1 + Pi_thetasJ_2D(n_rows, n_columns, 'X', i)*thetas[i]
+        H1 = H1 + Pi_thetasG_2D(n_rows, n_columns, 'X', i)*thetas[i+num_qubits]
     return H1 # H1 + H0
 
 

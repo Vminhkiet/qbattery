@@ -2,7 +2,7 @@ import numpy as np
 
 learning_rate = 0.3
 delta = 0.001
-max_iterations = 150
+max_iterations = 10
 
 h = 1
 
@@ -17,3 +17,4 @@ ZZ = np.kron(Z,Z)
 dw = np.array([[1/np.sqrt(2)],[-1j/np.sqrt(2)]])
 state=np.array([[1/np.sqrt(2)],[1/np.sqrt(2)]])
 tubular = 1
+row = 1
